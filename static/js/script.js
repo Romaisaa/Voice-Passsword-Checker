@@ -5,87 +5,63 @@ class VoiceRecorder {
     } else {
       console.log("getUserMedia is not supported on your browser!");
     }
-
-    this.mediaRecorder;
-    this.stream;
-    this.chunks = [];
     this.isRecording = false;
     this.startRef = document.querySelector("#recordButton");
     this.startRef.onclick = this.startRecording.bind(this);
-
     this.constraints = {
       audio: true,
       video: false,
     };
   }
 
-  handleSuccess(stream) {
-    this.stream = stream;
+  async startRecording() {
+    if (this.isRecording) return;
+    this.startRef.innerHTML = '<button class="Rec">Recording</button>';
+    this.isRecording = true;
+    // Start Recording Functionality
+    var gumStream, rec, input, audioContext;
+    navigator.mediaDevices
+      .getUserMedia(this.constraints)
+      .then(function (stream) {
+        gumStream = stream;
+        audioContext = new AudioContext();
+        input = audioContext.createMediaStreamSource(stream);
+        rec = new Recorder(input, { numChannels: 1 });
+        rec.record();
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+    // 3 Sec Record
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    this.stream.oninactive = () => {
-      console.log("Stream ended!");
-    };
-    this.mediaRecorder = new MediaRecorder(this.stream);
-    console.log(this.mediaRecorder);
-    this.mediaRecorder.ondataavailable =
-      this.onMediaRecorderDataAvailable.bind(this);
-    this.mediaRecorder.onstop = this.onMediaRecorderStop.bind(this);
-    this.mediaRecorder.start();
+    // Stop Recording
+    this.startRef.innerHTML =
+      '<img src="/static/img/mic.svg" alt="Record" class="img-fluid id="stop"" />';
+    rec.stop();
+    gumStream.getAudioTracks()[0].stop();
+
+    //Export record as wav file and send to back
+    rec.exportWAV(this.exportToBack);
   }
 
-  handleError(error) {
-    console.log("navigator.getUserMedia error: ", error);
-  }
-
-  onMediaRecorderDataAvailable(e) {
-    this.chunks.push(e.data);
-  }
-
-  async onMediaRecorderStop(e) {
-    const blob = new Blob(this.chunks, { type: "audio/wav; codecs=opus" });
-    blob.name = "new_record.wav";
-    const audioURL = window.URL.createObjectURL(blob);
-    console.log(audioURL);
-    // this.playerRef.src = audioURL;
-    this.chunks = [];
-    this.stream.getAudioTracks().forEach((track) => track.stop());
-    this.stream = null;
-    console.log(blob);
+  // Send blob file to backend
+  async exportToBack(blob) {
     let userName;
+    var formData = new FormData();
+    formData.append("source", blob, blob.name);
     await $.ajax({
       method: "POST",
       url: "http://127.0.0.1:5001/predict-user",
-      dataType: "json",
+      processData: false,
+      contentType: false,
       async: false,
-      data: {
-        record: "wav_file",
-      },
+      data: formData,
       success: function (res, status, xhr) {
         userName = res;
       },
     });
     console.log(userName);
-  }
-
-  async startRecording() {
-    if (this.isRecording) return;
-    this.startRef.innerHTML = '<button class="Rec">Recording</button>';
-    this.isRecording = true;
-    // this.playerRef.src = "";
-    navigator.mediaDevices
-      .getUserMedia(this.constraints)
-      .then(this.handleSuccess.bind(this))
-      .catch(this.handleError.bind(this));
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    this.startRef.innerHTML =
-      '<img src="/static/img/mic.svg" alt="Record" class="img-fluid id="stop"" />';
-    this.stopRecording();
-  }
-
-  stopRecording() {
-    if (!this.isRecording) return;
-    this.isRecording = false;
-    this.mediaRecorder.stop();
   }
 }
 
