@@ -12,10 +12,11 @@ class VoiceRecorder {
       audio: true,
       video: false,
     };
+    this.counter = 0;
   }
 
   async startRecording() {
-    if (this.isRecording) return;
+    // if (this.isRecording) return;
     this.startRef.innerHTML = '<button class="Rec">Recording</button>';
     this.isRecording = true;
     // Start Recording Functionality
@@ -36,9 +37,10 @@ class VoiceRecorder {
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // Stop Recording
+
+    rec.stop();
     this.startRef.innerHTML =
       '<img src="/static/img/mic.svg" alt="Record" class="img-fluid id="stop"" />';
-    rec.stop();
     gumStream.getAudioTracks()[0].stop();
 
     //Export record as wav file and send to back
@@ -62,6 +64,17 @@ class VoiceRecorder {
       },
     });
     console.log(userName);
+    // var url = URL.createObjectURL(blob);
+    // var au = document.createElement("audio");
+    // var li = document.createElement("li");
+    // var link = document.createElement("a");
+    // //add controls to the <audio> element
+    // au.controls = true;
+    // au.src = url;
+    // //link the a element to the blob
+    // link.href = url;
+    // link.download = new Date().toISOString() + ".wav";
+    // link.innerHTML = link.download;
   }
 }
 
