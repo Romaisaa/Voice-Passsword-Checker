@@ -59,6 +59,7 @@ button {
 }
 .figure-container {
   padding: 0.3rem 0.15rem;
+  padding-left: 5em;
 }
 
 .sig .fig .figure-container .figure {
@@ -95,8 +96,8 @@ button {
 }
 
 .center {
-  margin: auto;
-  width: 50%;
+  /* margin: auto; */
+  width: 100%;
   border: 0.2rem solid rgba(64, 66, 64, 0.11);
   border-radius: 1rem;
   padding: 0.2rem;
@@ -104,6 +105,7 @@ button {
 .container {
   align-items: center;
 }
+
 #main-app {
   /* align-items: flex-end;
   flex-direction: column; */
@@ -127,4 +129,9 @@ button {
   .column {
     width: 100%;
   }
+}
+
+#page {
+  margin-left: 4.5rem;
+  margin-right: 4.5rem;
 }

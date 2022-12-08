@@ -31,12 +31,14 @@ def predict_user():
         if np.abs(Prediction[person]-Prediction[i])<1:
             counter+=1
     if counter==1:
+        user_name=Members[person]
         print(Members[person])
         print(predict("Voc"))
     else:
         print("Unknown")
+        user_name="Unknown"
     print(Prediction)
-    return ["Happend"]
+    return [user_name]
 
 @app.route('/check-statement', methods=['POST'])
 def check_statement():
@@ -44,10 +46,9 @@ def check_statement():
 
 @app.route("/plot-data",methods=['POST'])
 def plot_data():
-    x,y,z = utilities.dataToDraw()
-    print(len(x),len(y),len(z))
-    print(type(x),type(y),type(z))
-    return[x,y,z]
+    x,y,z,scatter_x,scatter_y = utilities.dataToDraw()
+
+    return[x,y,z,scatter_x,scatter_y]
 
 
 if __name__ == "__main__":
