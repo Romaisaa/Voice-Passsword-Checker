@@ -1,8 +1,7 @@
 from flask import Flask, request, render_template,Response
 from flask_cors import CORS
-import librosa
+import utilities
 from werkzeug.utils import secure_filename
-import os
 from Gmm import predict
 from Randomforrest import predict_voice
 import numpy as np
@@ -43,9 +42,12 @@ def predict_user():
 def check_statement():
     return
 
-
-
-
+@app.route("/plot-data",methods=['POST'])
+def plot_data():
+    x,y,z = utilities.dataToDraw()
+    print(len(x),len(y),len(z))
+    print(type(x),type(y),type(z))
+    return[x,y,z]
 
 
 if __name__ == "__main__":

@@ -7,17 +7,18 @@ class VoiceRecorder {
     }
     this.isRecording = false;
     this.startRef = document.querySelector("#recordButton");
+    this.text = document.querySelector("#text");
     this.startRef.onclick = this.startRecording.bind(this);
     this.constraints = {
       audio: true,
       video: false,
     };
-    this.counter = 0;
   }
 
   async startRecording() {
-    // if (this.isRecording) return;
+    if (this.isRecording) return;
     this.startRef.innerHTML = '<button class="Rec">Recording</button>';
+    this.text.innerHTML = "Recording ...";
     this.isRecording = true;
     // Start Recording Functionality
     var gumStream, rec, input, audioContext;
@@ -37,10 +38,11 @@ class VoiceRecorder {
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // Stop Recording
-
-    rec.stop();
+    this.text.innerHTML = "Start Recording";
     this.startRef.innerHTML =
       '<img src="/static/img/mic.svg" alt="Record" class="img-fluid id="stop"" />';
+    await rec.stop();
+    this.isRecording = false;
     gumStream.getAudioTracks()[0].stop();
 
     //Export record as wav file and send to back
@@ -52,7 +54,7 @@ class VoiceRecorder {
     let userName;
     var formData = new FormData();
     formData.append("source", blob, blob.name);
-    await $.ajax({
+    $.ajax({
       method: "POST",
       url: "http://127.0.0.1:5001/predict-user",
       processData: false,
@@ -64,17 +66,7 @@ class VoiceRecorder {
       },
     });
     console.log(userName);
-    // var url = URL.createObjectURL(blob);
-    // var au = document.createElement("audio");
-    // var li = document.createElement("li");
-    // var link = document.createElement("a");
-    // //add controls to the <audio> element
-    // au.controls = true;
-    // au.src = url;
-    // //link the a element to the blob
-    // link.href = url;
-    // link.download = new Date().toISOString() + ".wav";
-    // link.innerHTML = link.download;
+    await getData();
   }
 }
 
