@@ -11,12 +11,22 @@ def replaceZeroes(data):
   data[data < 0.0000001] = 0.0000001
   return data
 
-def dataToDraw():
-    audio_data,sample_freq= librosa.load("audio.wav")
+def dataToDraw(username):
+    time, freq,nPxx,time_idx,freq_idx=spectro_plot("audio.wav")
+    print(username)
+    if username != "Unknown":
+
+        time2, freq2,nPxx2,time_idx2,freq_idx2= spectro_plot("Team-voices\\"+ username+ ".wav")
+
+    else:
+        time2, freq2,nPxx2,time_idx2,freq_idx2=[],[],[],[],[]
+    return  time, freq,nPxx,time_idx,freq_idx, time2, freq2,nPxx2,time_idx2,freq_idx2
+  
+def spectro_plot(filename):
+    audio_data,sample_freq= librosa.load(filename)
     N = 256
     w = signal.blackman(N)
     nFreqs, nTime, nPxx = signal.spectrogram(audio_data, window=w, nfft=N)
-    print(nPxx.shape)   
     nPxx=replaceZeroes(nPxx)
     nPxx=  10*np.log10(nPxx)
     # nPxx[nPxx < -100] =-60
@@ -31,9 +41,8 @@ def dataToDraw():
     i,j =np.where(peaks)
     amps=amps.flatten()
     zipped_peaks=zip(j,i,amps)
-    filter_peaks= filter(lambda x: x[2] > 3, zipped_peaks)
+    filter_peaks= filter(lambda x: x[2] > -10, zipped_peaks)
     filter_peaks=np.array(list(filter_peaks))
-    print(filter_peaks,filter_peaks.shape)
     try:
         time_idx=np.array(list(filter_peaks))[:,0]
         freq_idx=np.array(list(filter_peaks))[:,1]
@@ -43,4 +52,3 @@ def dataToDraw():
     time= np.linspace(0,nPxx.shape[0],nPxx.shape[0])
     freq= np.linspace(0,nPxx.shape[1],nPxx.shape[1])
     return  time.tolist(), freq.tolist(),nPxx.tolist(),time_idx.tolist(),freq_idx.tolist()
-  

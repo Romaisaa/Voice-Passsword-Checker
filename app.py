@@ -12,7 +12,7 @@ cors = CORS(app, resources={
         'origins': '*'
     }
 })
-
+username= "Unknown"
 
 @app.route('/')
 def home():
@@ -20,35 +20,36 @@ def home():
 
 @app.route('/predict-user', methods=['POST'])
 def predict_user():
+    global username
     file = request.files['source']
     file.save("audio.wav")
     Prediction=predict("Voice")
-    print(predict_voice())
     person= np.argmax(Prediction)
+    print(Prediction)
     counter=0
-    Members=["Dina","Romasiaa","Shaaban"]
+    Members=["Dina","Romaisaa","Shaaban"]
     for i in range(3):
-        if np.abs(Prediction[person]-Prediction[i])<1:
+        threshold= 0.7
+        if person==2:
+            threshold=2
+        if np.abs(Prediction[person]-Prediction[i])<threshold:
             counter+=1
     if counter==1:
         user_name=Members[person]
         print(Members[person])
-        print(predict("Voc"))
     else:
         print("Unknown")
         user_name="Unknown"
     print(Prediction)
+    username=user_name
     return [user_name]
-
-@app.route('/check-statement', methods=['POST'])
-def check_statement():
-    return
 
 @app.route("/plot-data",methods=['POST'])
 def plot_data():
-    x,y,z,scatter_x,scatter_y = utilities.dataToDraw()
+    global username
+    x,y,z,scatter_x,scatter_y,x2,y2,z2,scatter_x2,scatter_y2 = utilities.dataToDraw(username)
 
-    return[x,y,z,scatter_x,scatter_y]
+    return[x,y,z,scatter_x,scatter_y,x2,y2,z2,scatter_x2,scatter_y2]
 
 
 if __name__ == "__main__":

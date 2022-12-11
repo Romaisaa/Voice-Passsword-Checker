@@ -68,7 +68,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
 
     return feat,energy
 
-def mfcc_feature(signal, samplerate=16000, winlen=0.025, winstep=0.01, numcep=13, nfilt=26, nfft=None, lowfreq=0, highfreq=None,
+def mfcc(signal, samplerate=16000, winlen=0.025, winstep=0.01, numcep=13, nfilt=26, nfft=None, lowfreq=0, highfreq=None,
          preemph=0.97, ceplifter=22 ,appendEnergy=True, winfunc=lambda x:numpy.ones((x,))):
 
     feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph,winfunc)
@@ -115,7 +115,7 @@ def extract_features(audio,rate,mode):
             "n_mfcc":13
         }
     }
-    mfcc_feature = mfcc_feature(audio,rate, options[mode]["winlen"],options[mode]["winstep"],options[mode]["n_mfcc"],nfft = options[mode]["nfft"], appendEnergy = True)    
+    mfcc_feature = mfcc(audio,rate, options[mode]["winlen"],options[mode]["winstep"],options[mode]["n_mfcc"],nfft = options[mode]["nfft"], appendEnergy = True)    
     mfcc_feature = preprocessing.scale(mfcc_feature)
     delta = calculate_delta(mfcc_feature,options[mode]["n_mfcc"])
     combined = np.hstack((mfcc_feature,delta)) 
