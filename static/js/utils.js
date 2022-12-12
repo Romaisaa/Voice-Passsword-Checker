@@ -1,4 +1,4 @@
-let getData = async (username) => {
+let getData = async () => {
   let input_spectro = {
     z: [],
     type: "heatmap",
@@ -19,14 +19,7 @@ let getData = async (username) => {
     colorscale: "Hot",
     // colorscale: colorScale,
   };
-  let predicted_scatter = {
-    x: [],
-    y: [],
-    type: "scatter",
-    mode: "markers",
 
-    marker: { color: "blue", size: 10 },
-  };
   let plot_data;
   $.ajax({
     method: "POST",
@@ -47,8 +40,6 @@ let getData = async (username) => {
   predicted_spectro.x = plot_data[5];
   predicted_spectro.y = plot_data[6];
   predicted_spectro.z = plot_data[7];
-  predicted_scatter.x = plot_data[8];
-  predicted_scatter.y = plot_data[9];
 
   let spectrolayout = {
     // width: auto,
@@ -68,15 +59,8 @@ let getData = async (username) => {
   };
   Plotly.newPlot("input_plot", [input_scatter, input_spectro], spectrolayout);
   let input_plot = document.getElementById("#input_plot");
-  console.log(predicted_scatter.x.length);
-  if (predicted_scatter.x.length != 0) {
-    Plotly.newPlot(
-      "fingerprint",
-      [predicted_scatter, predicted_spectro],
-      spectrolayout
-    );
-    let fingerprint = document.getElementById("#fingerprint");
-  }
+  Plotly.newPlot("fingerprint", [predicted_spectro], spectrolayout);
+  let fingerprint = document.getElementById("#fingerprint");
 };
 
 let lockText = document.querySelector("#lock-text");

@@ -100,42 +100,32 @@ def calculate_delta(array,n_mfcc):
         deltas[i] = ( array[index[0][0]]-array[index[0][1]] + (2 * (array[index[1][0]]-array[index[1][1]])) ) / 10
     return deltas
 
-def extract_features(audio,rate,mode):
-    options={
-        "Voice":{
-            "winlen":0.025,
-            "winstep":0.01,
-            "nfft":1200,
-            "n_mfcc":20
-        },
-        "Voc":{
-            "winlen":0.1,
-            "winstep":0.03,
-            "nfft":2250,
-            "n_mfcc":13
-        }
-    }
-    mfcc_feature = mfcc(audio,rate, options[mode]["winlen"],options[mode]["winstep"],options[mode]["n_mfcc"],nfft = options[mode]["nfft"], appendEnergy = True)    
+def extract_features(audio,rate):
+    mfcc_feature = mfcc(audio,rate, 0.025,0.01,20,nfft = 1200, appendEnergy = True)    
     mfcc_feature = preprocessing.scale(mfcc_feature)
-    delta = calculate_delta(mfcc_feature,options[mode]["n_mfcc"])
+    delta = calculate_delta(mfcc_feature,20)
     combined = np.hstack((mfcc_feature,delta)) 
     return combined
 
-def predict(mode):
+def predict(mode,username):
     modelpath={
         "Voice":"models",
         "Voc":"models_voc"
     }
+    path= modelpath[mode]
+    if mode=="Voc":
+        path=path+"\\"+username
     
-    gmm_files = [os.path.join(modelpath[mode],fname) for fname in
-                  os.listdir(modelpath[mode]) if fname.endswith('.gmm')]
+
+    gmm_files = [os.path.join(path,fname) for fname in
+                  os.listdir(path) if fname.endswith('.gmm')]
      
     #Load the Gaussian gender Models
     models    = [pickle.load(open(fname,'rb')) for fname in gmm_files]
      
     # Read the test directory and get the list of test audio files 
     audio,sr = librosa.load("audio.wav")
-    vector   = extract_features(audio,sr,mode)
+    vector   = extract_features(audio,sr)
         
     log_likelihood = np.zeros(len(models)) 
     

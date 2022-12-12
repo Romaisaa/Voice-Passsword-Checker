@@ -5,28 +5,25 @@ import librosa
 from scipy.ndimage.filters import maximum_filter
 from scipy.ndimage.morphology import (generate_binary_structure,
                                     iterate_structure, binary_erosion)
+from python_speech_features import mfcc
 
 def replaceZeroes(data):
   min_nonzero = np.min(data[np.nonzero(data)])
   data[data < 0.0000001] = 0.0000001
   return data
 
-def dataToDraw(username):
-    time, freq,nPxx,time_idx,freq_idx=spectro_plot("audio.wav")
-    print(username)
-    if username != "Unknown":
+def dataToDraw():
+    audioData, sr = librosa.load("audio.wav")
+    time, freq,nPxx,time_idx,freq_idx=spectro_plot(audioData,sr)
+    time2, freq2,nPxx2= mfcc_plot(audioData, sr)
 
-        time2, freq2,nPxx2,time_idx2,freq_idx2= spectro_plot("Team-voices\\"+ username+ ".wav")
-
-    else:
-        time2, freq2,nPxx2,time_idx2,freq_idx2=[],[],[],[],[]
-    return  time, freq,nPxx,time_idx,freq_idx, time2, freq2,nPxx2,time_idx2,freq_idx2
   
-def spectro_plot(filename):
-    audio_data,sample_freq= librosa.load(filename)
+    return  time, freq,nPxx,time_idx,freq_idx, time2, freq2,nPxx2
+  
+def spectro_plot(audioData,sr):
     N = 256
     w = signal.blackman(N)
-    nFreqs, nTime, nPxx = signal.spectrogram(audio_data, window=w, nfft=N)
+    nFreqs, nTime, nPxx = signal.spectrogram(audioData, window=w, nfft=N)
     nPxx=replaceZeroes(nPxx)
     nPxx=  10*np.log10(nPxx)
     # nPxx[nPxx < -100] =-60
@@ -51,4 +48,11 @@ def spectro_plot(filename):
         freq_idx=np.array([])
     time= np.linspace(0,nPxx.shape[0],nPxx.shape[0])
     freq= np.linspace(0,nPxx.shape[1],nPxx.shape[1])
+    print(nPxx.shape)
     return  time.tolist(), freq.tolist(),nPxx.tolist(),time_idx.tolist(),freq_idx.tolist()
+
+def mfcc_plot(audioData,sr):
+    MFCC= librosa.feature.melspectrogram(y=audioData,sr=sr)
+    time= np.linspace(0,MFCC.shape[0],MFCC.shape[0])
+    freq= np.linspace(0,MFCC.shape[1],MFCC.shape[1])
+    return  time.tolist(), freq.tolist(),MFCC.tolist()

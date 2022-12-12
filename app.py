@@ -1,9 +1,7 @@
 from flask import Flask, request, render_template,Response
 from flask_cors import CORS
 import utilities
-from werkzeug.utils import secure_filename
 from Gmm import predict
-from Randomforrest import predict_voice
 import numpy as np
 app = Flask(__name__, template_folder='./template', static_folder='./static')
 CORS(app)
@@ -23,7 +21,7 @@ def predict_user():
     global username
     file = request.files['source']
     file.save("audio.wav")
-    Prediction=predict("Voice")
+    Prediction=predict("Voice",username)
     person= np.argmax(Prediction)
     print(Prediction)
     counter=0
@@ -31,12 +29,18 @@ def predict_user():
     for i in range(3):
         threshold= 0.7
         if person==2:
-            threshold=2
+            threshold=1.5
         if np.abs(Prediction[person]-Prediction[i])<threshold:
             counter+=1
     if counter==1:
         user_name=Members[person]
         print(Members[person])
+        words=predict("Voc",Members[person])
+        wordIndex=np.argmax(words)
+        print(wordIndex)
+        print(words)
+        if wordIndex!=1:
+            user_name="Unknown"
     else:
         print("Unknown")
         user_name="Unknown"
@@ -47,9 +51,9 @@ def predict_user():
 @app.route("/plot-data",methods=['POST'])
 def plot_data():
     global username
-    x,y,z,scatter_x,scatter_y,x2,y2,z2,scatter_x2,scatter_y2 = utilities.dataToDraw(username)
+    x,y,z,scatter_x,scatter_y,x2,y2,z2 = utilities.dataToDraw()
 
-    return[x,y,z,scatter_x,scatter_y,x2,y2,z2,scatter_x2,scatter_y2]
+    return[x,y,z,scatter_x,scatter_y,x2,y2,z2]
 
 
 if __name__ == "__main__":
