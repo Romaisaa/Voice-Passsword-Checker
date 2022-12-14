@@ -11,6 +11,7 @@ cors = CORS(app, resources={
     }
 })
 username= "Unknown"
+prediction=[]
 
 @app.route('/')
 def home():
@@ -19,6 +20,7 @@ def home():
 @app.route('/predict-user', methods=['POST'])
 def predict_user():
     global username
+    global prediction
     file = request.files['source']
     file.save("audio.wav")
     Prediction=predict("Voice",username)
@@ -46,15 +48,22 @@ def predict_user():
         user_name="Unknown"
     print(Prediction)
     username=user_name
+    if max(Prediction)<=-30:
+        user_name="ERROR"
+    prediction=Prediction
     return [user_name]
 
 @app.route("/plot-data",methods=['POST'])
 def plot_data():
     global username
-    x,y,z,scatter_x,scatter_y,x2,y2,z2 = utilities.dataToDraw()
+    global prediction
+    prediction=np.array(prediction)+35
+    predict=prediction.tolist()
+    x,y,x2,y2,z2 = utilities.dataToDraw()
 
-    return[x,y,z,scatter_x,scatter_y,x2,y2,z2]
+    return[ x,y,x2,y2,z2 ,predict]
 
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
+

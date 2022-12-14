@@ -100,8 +100,18 @@ def calculate_delta(array,n_mfcc):
         deltas[i] = ( array[index[0][0]]-array[index[0][1]] + (2 * (array[index[1][0]]-array[index[1][1]])) ) / 10
     return deltas
 
-def extract_features(audio,rate):
-    mfcc_feature = mfcc(audio,rate, 0.025,0.01,20,nfft = 1200, appendEnergy = True)    
+def extract_features(audio,rate,mode):
+    options={
+        "Voice":{
+            "wenlen":0.025,
+            "wenlap":0.01
+        },
+        "Voc":{
+            "wenlen":0.0125,
+            "wenlap":0.005
+        }
+    }
+    mfcc_feature = mfcc(audio,rate,options[mode]["wenlen"],options[mode]["wenlap"],20,nfft = 1200, appendEnergy = True)    
     mfcc_feature = preprocessing.scale(mfcc_feature)
     delta = calculate_delta(mfcc_feature,20)
     combined = np.hstack((mfcc_feature,delta)) 
@@ -125,7 +135,7 @@ def predict(mode,username):
      
     # Read the test directory and get the list of test audio files 
     audio,sr = librosa.load("audio.wav")
-    vector   = extract_features(audio,sr)
+    vector   = extract_features(audio,sr,mode)
         
     log_likelihood = np.zeros(len(models)) 
     

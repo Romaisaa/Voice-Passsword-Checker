@@ -1,23 +1,18 @@
 let getData = async () => {
-  let input_spectro = {
+  let input_bar = {
+    type: "bar",
+    // colorscale: colorScale,
+  };
+  let input_mel = {
     z: [],
     type: "heatmap",
     colorscale: "Hot",
-    // colorscale: colorScale,
   };
-  let input_scatter = {
-    x: [],
-    y: [],
-    type: "scatter",
-    mode: "markers",
 
-    marker: { color: "blue", size: 10 },
-  };
-  let predicted_spectro = {
-    z: [],
-    type: "heatmap",
-    colorscale: "Hot",
-    // colorscale: colorScale,
+  let chart_data = {
+    x: ["Dina", "Romaisaa", "Shaaban"],
+    y: [],
+    type: "bar",
   };
 
   let plot_data;
@@ -32,21 +27,17 @@ let getData = async () => {
       plot_data = res;
     },
   });
-  input_spectro.x = plot_data[0];
-  input_spectro.y = plot_data[1];
-  input_spectro.z = plot_data[2];
-  input_scatter.x = plot_data[3];
-  input_scatter.y = plot_data[4];
-  predicted_spectro.x = plot_data[5];
-  predicted_spectro.y = plot_data[6];
-  predicted_spectro.z = plot_data[7];
+  input_bar.x = plot_data[0];
+  input_bar.y = plot_data[1];
+  input_mel.x = plot_data[2];
+  input_mel.y = plot_data[3];
+  input_mel.z = plot_data[4];
+  chart_data.y = plot_data[5];
 
   let spectrolayout = {
-    // width: auto,
-    height: 300,
+    height: 250,
     margin: { l: 50, r: 50, b: 25, t: 25, pad: 1 },
     yaxis: {
-      // range: [0, Math.max.apply(Math, spectro.x)],
       showticklabels: false,
       showtickprefix: "none",
       showticksuffix: "none",
@@ -57,10 +48,54 @@ let getData = async () => {
       showticksuffix: "none",
     },
   };
-  Plotly.newPlot("input_plot", [input_scatter, input_spectro], spectrolayout);
+  Plotly.newPlot("input_plot", [input_mel], spectrolayout);
+  var min_score = Math.min.apply(Math, chart_data.y);
+  var index = chart_data.y.indexOf(min_score);
+  let high_scores = [];
+  for (i = 0; i < 3; i++) {
+    if (i === index) continue;
+    high_scores.push(chart_data.y[i]);
+  }
+  var layout = {
+    height: 250,
+    margin: { l: 50, r: 50, b: 25, t: 25, pad: 1 },
+    shapes: [
+      {
+        type: "line",
+        xref: "paper",
+        x0: 0,
+        y0: high_scores[0],
+        x1: 1,
+        y1: high_scores[0],
+        line: {
+          color: "red",
+          width: 2,
+        },
+      },
+      {
+        type: "line",
+        xref: "paper",
+        x0: 0,
+        y0: high_scores[1],
+        x1: 1,
+        y1: high_scores[1],
+        line: {
+          color: "red",
+          width: 2,
+        },
+      },
+    ],
+  };
+  var bars_layout = {
+    height: 250,
+    margin: { l: 50, r: 50, b: 37, t: 25, pad: 1 },
+  };
   let input_plot = document.getElementById("#input_plot");
-  Plotly.newPlot("fingerprint", [predicted_spectro], spectrolayout);
+  Plotly.newPlot("fingerprint", [chart_data], layout);
   let fingerprint = document.getElementById("#fingerprint");
+
+  Plotly.newPlot("mfcc_bars", [input_bar], bars_layout);
+  let mfcc_bars = document.getElementById("#mfcc_bars");
 };
 
 let lockText = document.querySelector("#lock-text");
@@ -69,12 +104,15 @@ let username = document.querySelector("#user-name");
 let auth = document.querySelector("#auth");
 
 let changeStyle = async (predicted_username) => {
-  if (predicted_username == "Unknown") {
+  if (predicted_username == "Unknown" || predicted_username == "ERROR") {
     lockText.innerHTML = "Locked";
     lockImg.innerHTML =
       '<img src="/static/img/lock.svg"alt="locked"class="img-fluid"width="150"/>';
-    username.innerHTML = "Sorry, Can't be recognized";
     auth.innerHTML = "You are not authorized";
+
+    if (predicted_username == "ERROR") {
+      username.innerHTML = "Error, please try again";
+    } else username.innerHTML = "Sorry, Can't be recognized";
   } else {
     lockText.innerHTML = "Unlocked";
     lockImg.innerHTML =

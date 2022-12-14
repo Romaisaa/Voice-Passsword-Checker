@@ -14,11 +14,12 @@ def replaceZeroes(data):
 
 def dataToDraw():
     audioData, sr = librosa.load("audio.wav")
-    time, freq,nPxx,time_idx,freq_idx=spectro_plot(audioData,sr)
-    time2, freq2,nPxx2= mfcc_plot(audioData, sr)
+    time, freq,nPxx=spectro_plot(audioData,sr)
+    time2, freq2,nPxx2= mfcc_plot(audioData, sr,freq)
+    labels, mfcc= mfcc_coef_bar( audioData, sr)
 
   
-    return  time, freq,nPxx,time_idx,freq_idx, time2, freq2,nPxx2
+    return  labels, mfcc,time2, freq2,nPxx2
   
 def spectro_plot(audioData,sr):
     N = 256
@@ -26,33 +27,18 @@ def spectro_plot(audioData,sr):
     nFreqs, nTime, nPxx = signal.spectrogram(audioData, window=w, nfft=N)
     nPxx=replaceZeroes(nPxx)
     nPxx=  10*np.log10(nPxx)
-    # nPxx[nPxx < -100] =-60
+    return  nTime.tolist(), nFreqs.tolist(),nPxx.tolist()
 
-    base=generate_binary_structure(2,1)
-    structure=iterate_structure(generate_binary_structure(2,1),5)
-    local_max=maximum_filter(nPxx, footprint=structure)==nPxx
-    zeros= nPxx==0
-    eroded_zeros= binary_erosion(zeros,structure=structure,border_value=1)
-    peaks=local_max^eroded_zeros
-    amps= nPxx[peaks]
-    i,j =np.where(peaks)
-    amps=amps.flatten()
-    zipped_peaks=zip(j,i,amps)
-    filter_peaks= filter(lambda x: x[2] > -10, zipped_peaks)
-    filter_peaks=np.array(list(filter_peaks))
-    try:
-        time_idx=np.array(list(filter_peaks))[:,0]
-        freq_idx=np.array(list(filter_peaks))[:,1]
-    except:
-        time_idx=np.array([])
-        freq_idx=np.array([])
-    time= np.linspace(0,nPxx.shape[0],nPxx.shape[0])
-    freq= np.linspace(0,nPxx.shape[1],nPxx.shape[1])
-    print(nPxx.shape)
-    return  time.tolist(), freq.tolist(),nPxx.tolist(),time_idx.tolist(),freq_idx.tolist()
+def mfcc_plot(audioData,sr,time):
+    S = librosa.feature.melspectrogram(audioData, sr=sr)
+    S_DB = librosa.power_to_db(S, ref=np.max)
+    time= np.linspace(0,S_DB.shape[0],S_DB.shape[0])
+    freq= np.linspace(0,S_DB.shape[0],S_DB.shape[0])
+    return  time.tolist(),freq.tolist(),S_DB.tolist()
 
-def mfcc_plot(audioData,sr):
-    MFCC= librosa.feature.melspectrogram(y=audioData,sr=sr)
-    time= np.linspace(0,MFCC.shape[0],MFCC.shape[0])
-    freq= np.linspace(0,MFCC.shape[1],MFCC.shape[1])
-    return  time.tolist(), freq.tolist(),MFCC.tolist()
+def mfcc_coef_bar(audioData,sr):
+    mfcc= librosa.feature.mfcc(audioData,sr)
+    mfcc= np.mean(mfcc,axis=1)
+    labels= [f"mfcc_{i+1}" for i in range(18)]
+
+    return labels, mfcc[2:].tolist()

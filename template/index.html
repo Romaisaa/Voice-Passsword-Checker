@@ -21,11 +21,6 @@
       <div class="row">
         <div class="column">
           <div class="center">
-            <h3 style="padding: 0rem 1rem;">Voice Recognition System:</h1>
-            <p style="padding: 0.2rem 2rem; font-size:large;">&emsp;&emsp;A web application for team members voice identifcation, using Gaussian mixture models, models depend on mfcc feature extracted from audio and first order delta summation.</p>
-          </div>
-          <div style="height: 1rem;"></div>
-          <div class="center">
             <div class="row">
               <div class="column" id="test">
                 <h2 id="text">Start Recording</h2>
@@ -56,8 +51,22 @@
             </div>
           </div>
           <div id="test">
-            <p style="font-size: 3.5rem; font-weight: 600; text-align: center;" id="user-name">Sorry, Can't be recognized</p>
-              <h1  id="auth">You are not authorized</h1>
+            <p style="font-size: 3rem; font-weight: 600; text-align: center;" id="user-name">Sorry, Can't be recognized</p>
+              <p style="font-size: 2rem; font-weight: 600;" id="auth">You are not authorized</p>
+          </div>
+          <div class="row">
+            <div class="column">
+              <div id="test" class="center">
+                <img class ="feature_img" src="../static/img/diagram.jpg" alt="">
+                <div><span style=" font-weight: 700;" >Figure 1:</span> Shows the input spectrogram with local maxminum peaks as a fingerprint of the audio</div>
+              </div>
+            </div>
+            <div class="column">
+              <div id="test" class="center">
+                <img class ="feature_img" src="../static/img/diagram.jpg" alt="">
+                <div><span style=" font-weight: 700;" >Figure 1:</span> Shows the input spectrogram with local maxminum peaks as a fingerprint of the audio</div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="column">
@@ -67,7 +76,7 @@
                 <div class="figure">
                     <div id="input_plot" class="myPlot spctrogram"></div>
                 </div> 
-                <div><span style=" font-weight: 700;" >Figure 1:</span> Shows the input spectrogram with local maxminum peaks as a fingerprint of the audio</div>
+                <div><span style=" font-weight: 700;" >Figure 2:</span> Shows the input spectrogram with local maxminum peaks as a fingerprint of the audio</div>
 
             </div>
             <div class="fig">
@@ -75,12 +84,23 @@
                   <div class="figure">
                       <div id="fingerprint" class="myPlot spctrogram"></div>
                   </div> 
-                  <div ><span style=" font-weight: 700;" >Figure 2:</span> Shows the input audio mel-frequency cepstral coefficients, which is the main feature for<br> our model</div>
+                  <div ><span style=" font-weight: 700;" >Figure 3:</span> Shows gaussian mixture models scores for each team member with threshold lines <br> </div>
+              </div>
+            </div>
+            <div class="fig">
+              <div class="figure-container">
+                  <div class="figure">
+                      <div id="mfcc_bars" class="myPlot spctrogram"></div>
+                  </div> 
+                  <div ><span style=" font-weight: 700;" >Figure 4:</span> Shows gaussian mixture models scores for each team member with threshold lines <br> </div>
               </div>
             </div>
         </div>
+        
       </div>
+      
     </div>
+    
     <script src="/static/js/utils.js"></script>
     <script src="/static/js/recorder.js"></script>
     <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
