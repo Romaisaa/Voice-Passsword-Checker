@@ -59,9 +59,9 @@ def plot_data():
     global prediction
     prediction=np.array(prediction)+35
     predict=prediction.tolist()
-    x,y,x2,y2,z2 = utilities.dataToDraw()
+    x,y,mfcc_coef,x2,y2,z2 = utilities.dataToDraw()
 
-    return[ x,y,x2,y2,z2 ,predict]
+    return[ x,y,mfcc_coef,x2,y2,z2 ,predict]
 
 
 if __name__ == "__main__":

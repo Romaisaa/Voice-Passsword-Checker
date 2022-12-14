@@ -16,10 +16,10 @@ def dataToDraw():
     audioData, sr = librosa.load("audio.wav")
     time, freq,nPxx=spectro_plot(audioData,sr)
     time2, freq2,nPxx2= mfcc_plot(audioData, sr,freq)
-    labels, mfcc= mfcc_coef_bar( audioData, sr)
+    labels, mfcc, mfcc_coef= mfcc_coef_bar( audioData, sr)
 
   
-    return  labels, mfcc,time2, freq2,nPxx2
+    return  labels, mfcc,mfcc_coef,time2, freq2,nPxx2
   
 def spectro_plot(audioData,sr):
     N = 256
@@ -38,7 +38,9 @@ def mfcc_plot(audioData,sr,time):
 
 def mfcc_coef_bar(audioData,sr):
     mfcc= librosa.feature.mfcc(audioData,sr)
-    mfcc= np.mean(mfcc,axis=1)
+    mfcc_means= np.mean(mfcc,axis=1)
     labels= [f"mfcc_{i+1}" for i in range(18)]
+    print(mfcc.shape)
 
-    return labels, mfcc[2:].tolist()
+
+    return labels, mfcc_means[2:].tolist(), mfcc[4].tolist()

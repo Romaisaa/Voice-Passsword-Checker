@@ -61,6 +61,9 @@ button {
   padding: 0.3rem 0.15rem;
   padding-left: 5em;
 }
+.figure-scores-container {
+  padding: 0.3rem 0.15rem;
+}
 
 .sig .fig .figure-container .figure {
   border-radius: var(--border-radius);
@@ -137,6 +140,6 @@ button {
 }
 
 .feature_img {
-  /* height: 10rem; */
+  height: 23.2rem;
   width: 24rem;
 }

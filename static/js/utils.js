@@ -8,6 +8,10 @@ let getData = async () => {
     type: "heatmap",
     colorscale: "Hot",
   };
+  let hist_plot = {
+    x: [],
+    type: "histogram",
+  };
 
   let chart_data = {
     x: ["Dina", "Romaisaa", "Shaaban"],
@@ -29,11 +33,11 @@ let getData = async () => {
   });
   input_bar.x = plot_data[0];
   input_bar.y = plot_data[1];
-  input_mel.x = plot_data[2];
-  input_mel.y = plot_data[3];
-  input_mel.z = plot_data[4];
-  chart_data.y = plot_data[5];
-
+  hist_plot.x = plot_data[2];
+  input_mel.x = plot_data[3];
+  input_mel.y = plot_data[4];
+  input_mel.z = plot_data[5];
+  chart_data.y = plot_data[6];
   let spectrolayout = {
     height: 250,
     margin: { l: 50, r: 50, b: 25, t: 25, pad: 1 },
@@ -59,6 +63,15 @@ let getData = async () => {
   var layout = {
     height: 250,
     margin: { l: 50, r: 50, b: 25, t: 25, pad: 1 },
+  };
+  var bars_layout = {
+    height: 250,
+    margin: { l: 50, r: 50, b: 37, t: 25, pad: 1 },
+  };
+  let score_layout = {
+    width: 350,
+    height: 333,
+    margin: { l: 40, r: 10, b: 37, t: 0, pad: 1 },
     shapes: [
       {
         type: "line",
@@ -86,16 +99,14 @@ let getData = async () => {
       },
     ],
   };
-  var bars_layout = {
-    height: 250,
-    margin: { l: 50, r: 50, b: 37, t: 25, pad: 1 },
-  };
   let input_plot = document.getElementById("#input_plot");
-  Plotly.newPlot("fingerprint", [chart_data], layout);
+  Plotly.newPlot("fingerprint", [input_bar], bars_layout);
   let fingerprint = document.getElementById("#fingerprint");
 
-  Plotly.newPlot("mfcc_bars", [input_bar], bars_layout);
+  Plotly.newPlot("mfcc_bars", [hist_plot], layout);
   let mfcc_bars = document.getElementById("#mfcc_bars");
+  let scores_plot = document.getElementById("#scores_plot");
+  Plotly.newPlot("scores_plot", [chart_data], score_layout);
 };
 
 let lockText = document.querySelector("#lock-text");

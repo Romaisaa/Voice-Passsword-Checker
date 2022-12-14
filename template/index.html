@@ -58,14 +58,18 @@
             <div class="column">
               <div id="test" class="center">
                 <img class ="feature_img" src="../static/img/diagram.jpg" alt="">
-                <div><span style=" font-weight: 700;" >Figure 1:</span> Shows the input spectrogram with local maxminum peaks as a fingerprint of the audio</div>
+                <div><span style=" font-weight: 700;" >Figure 1:</span> Shows the block diagram of mfcc</div>
               </div>
             </div>
             <div class="column">
-              <div id="test" class="center">
-                <img class ="feature_img" src="../static/img/diagram.jpg" alt="">
-                <div><span style=" font-weight: 700;" >Figure 1:</span> Shows the input spectrogram with local maxminum peaks as a fingerprint of the audio</div>
+              <div class="center" id="test">
+              <div class="figure-scores-container">
+                <div class="figure">
+                    <div id="scores_plot" class="myPlot spctrogram"></div>
+                </div> 
+                <div><span style=" font-weight: 700;" >Figure 2:</span> Shows gaussian mixture models scores for each team member with threshold lines</div>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -76,7 +80,7 @@
                 <div class="figure">
                     <div id="input_plot" class="myPlot spctrogram"></div>
                 </div> 
-                <div><span style=" font-weight: 700;" >Figure 2:</span> Shows the input spectrogram with local maxminum peaks as a fingerprint of the audio</div>
+                <div><span style=" font-weight: 700;" >Figure 3:</span> Shows the input mel-spectrogram of the audio</div>
 
             </div>
             <div class="fig">
@@ -84,7 +88,7 @@
                   <div class="figure">
                       <div id="fingerprint" class="myPlot spctrogram"></div>
                   </div> 
-                  <div ><span style=" font-weight: 700;" >Figure 3:</span> Shows gaussian mixture models scores for each team member with threshold lines <br> </div>
+                  <div ><span style=" font-weight: 700;" >Figure 4:</span> Shows mfcc mean of coefficients for the input audio <br> </div>
               </div>
             </div>
             <div class="fig">
@@ -92,7 +96,7 @@
                   <div class="figure">
                       <div id="mfcc_bars" class="myPlot spctrogram"></div>
                   </div> 
-                  <div ><span style=" font-weight: 700;" >Figure 4:</span> Shows gaussian mixture models scores for each team member with threshold lines <br> </div>
+                  <div ><span style=" font-weight: 700;" >Figure 5:</span> Shows mfcc thrid coefficients distribution for the input audio<br> </div>
               </div>
             </div>
         </div>
