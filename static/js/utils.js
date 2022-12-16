@@ -9,12 +9,18 @@ let getData = async () => {
     colorscale: "Hot",
   };
   let hist_plot = {
-    x: [],
-    type: "histogram",
+    x: ["Feature1", "Feature2", "Feature3", "Feature4", "Feature5"],
+    y: [],
+    type: "bar",
   };
 
   let chart_data = {
     x: ["Dina", "Romaisaa", "Shaaban"],
+    y: [],
+    type: "bar",
+  };
+  let words_chart = {
+    x: ["Close", "Open", "Push", "Window"],
     y: [],
     type: "bar",
   };
@@ -33,11 +39,13 @@ let getData = async () => {
   });
   input_bar.x = plot_data[0];
   input_bar.y = plot_data[1];
-  hist_plot.x = plot_data[2];
+  hist_plot.y = plot_data[2];
   input_mel.x = plot_data[3];
   input_mel.y = plot_data[4];
   input_mel.z = plot_data[5];
   chart_data.y = plot_data[6];
+  words_chart.y = plot_data[7];
+
   let spectrolayout = {
     height: 250,
     margin: { l: 50, r: 50, b: 25, t: 25, pad: 1 },
@@ -99,6 +107,25 @@ let getData = async () => {
       },
     ],
   };
+  let words_layout = {
+    width: 350,
+    height: 333,
+    margin: { l: 40, r: 10, b: 37, t: 0, pad: 1 },
+    shapes: [
+      {
+        type: "line",
+        xref: "paper",
+        x0: 0,
+        y0: Math.max.apply(Math, words_chart.y),
+        x1: 1,
+        y1: Math.max.apply(Math, words_chart.y),
+        line: {
+          color: "red",
+          width: 2,
+        },
+      },
+    ],
+  };
   let input_plot = document.getElementById("#input_plot");
   Plotly.newPlot("fingerprint", [input_bar], bars_layout);
   let fingerprint = document.getElementById("#fingerprint");
@@ -106,7 +133,9 @@ let getData = async () => {
   Plotly.newPlot("mfcc_bars", [hist_plot], layout);
   let mfcc_bars = document.getElementById("#mfcc_bars");
   let scores_plot = document.getElementById("#scores_plot");
-  Plotly.newPlot("scores_plot", [chart_data], score_layout);
+  Plotly.newPlot("scores_plot", [words_chart], words_layout);
+  let words_plot = document.getElementById("#words_plot");
+  Plotly.newPlot("words_plot", [chart_data], score_layout);
 };
 
 let lockText = document.querySelector("#lock-text");

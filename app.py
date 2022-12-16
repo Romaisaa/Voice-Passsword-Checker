@@ -12,6 +12,7 @@ cors = CORS(app, resources={
 })
 username= "Unknown"
 prediction=[]
+words=[]
 
 @app.route('/')
 def home():
@@ -19,11 +20,11 @@ def home():
 
 @app.route('/predict-user', methods=['POST'])
 def predict_user():
-    global username
     global prediction
+    global words
     file = request.files['source']
     file.save("audio.wav")
-    Prediction=predict("Voice",username)
+    Prediction=predict("Voice")
     person= np.argmax(Prediction)
     print(Prediction)
     counter=0
@@ -36,18 +37,13 @@ def predict_user():
             counter+=1
     if counter==1:
         user_name=Members[person]
-        print(Members[person])
         words=predict("Voc",Members[person])
         wordIndex=np.argmax(words)
-        print(wordIndex)
-        print(words)
         if wordIndex!=1:
             user_name="Unknown"
     else:
-        print("Unknown")
         user_name="Unknown"
-    print(Prediction)
-    username=user_name
+        words=[-27,-27,-27,-27]
     if max(Prediction)<=-30:
         user_name="ERROR"
     prediction=Prediction
@@ -55,13 +51,16 @@ def predict_user():
 
 @app.route("/plot-data",methods=['POST'])
 def plot_data():
-    global username
     global prediction
+    global words
     prediction=np.array(prediction)+35
     predict=prediction.tolist()
-    x,y,mfcc_coef,x2,y2,z2 = utilities.dataToDraw()
+    words=np.array(words)+27
+    Words=words.tolist()
+    print(Words)
+    labels, mfcc,mfcc_coef,time, freq,amp = utilities.dataToDraw()
 
-    return[ x,y,mfcc_coef,x2,y2,z2 ,predict]
+    return[ labels, mfcc,mfcc_coef,time, freq,amp ,predict, Words]
 
 
 if __name__ == "__main__":

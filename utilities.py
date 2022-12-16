@@ -1,46 +1,30 @@
-from scipy import signal
 import numpy as np
-from scipy.io.wavfile import read
 import librosa
-from scipy.ndimage.filters import maximum_filter
-from scipy.ndimage.morphology import (generate_binary_structure,
-                                    iterate_structure, binary_erosion)
-from python_speech_features import mfcc
-
-def replaceZeroes(data):
-  min_nonzero = np.min(data[np.nonzero(data)])
-  data[data < 0.0000001] = 0.0000001
-  return data
+import pickle
+from sklearn.decomposition import PCA
 
 def dataToDraw():
     audioData, sr = librosa.load("audio.wav")
-    time, freq,nPxx=spectro_plot(audioData,sr)
-    time2, freq2,nPxx2= mfcc_plot(audioData, sr,freq)
+    time, freq,amp= mfcc_plot(audioData, sr)
     labels, mfcc, mfcc_coef= mfcc_coef_bar( audioData, sr)
-
+    return  labels, mfcc,mfcc_coef,time, freq,amp
   
-    return  labels, mfcc,mfcc_coef,time2, freq2,nPxx2
-  
-def spectro_plot(audioData,sr):
-    N = 256
-    w = signal.blackman(N)
-    nFreqs, nTime, nPxx = signal.spectrogram(audioData, window=w, nfft=N)
-    nPxx=replaceZeroes(nPxx)
-    nPxx=  10*np.log10(nPxx)
-    return  nTime.tolist(), nFreqs.tolist(),nPxx.tolist()
 
-def mfcc_plot(audioData,sr,time):
-    S = librosa.feature.melspectrogram(audioData, sr=sr)
-    S_DB = librosa.power_to_db(S, ref=np.max)
-    time= np.linspace(0,S_DB.shape[0],S_DB.shape[0])
-    freq= np.linspace(0,S_DB.shape[0],S_DB.shape[0])
-    return  time.tolist(),freq.tolist(),S_DB.tolist()
+
+def mfcc_plot(audioData,sr):
+    mel = librosa.feature.melspectrogram(audioData, sr=sr)
+    mel_DB = librosa.power_to_db(mel, ref=np.max)
+    time= np.linspace(0,mel_DB.shape[0],mel_DB.shape[0])
+    freq= np.linspace(0,mel_DB.shape[0],mel_DB.shape[0])
+    return  time.tolist(),freq.tolist(),mel_DB.tolist()
 
 def mfcc_coef_bar(audioData,sr):
-    mfcc= librosa.feature.mfcc(audioData,sr)
+    mfcc= librosa.feature.mfcc(audioData,sr,n_mfcc=40)
     mfcc_means= np.mean(mfcc,axis=1)
     labels= [f"mfcc_{i+1}" for i in range(18)]
-    print(mfcc.shape)
+    pca=pickle.load(open("pca.pkl",'rb'))
+    indies= [1013, 2721, 2722, 3071, 3072]
+    data=mfcc.reshape(-1)[indies]
 
 
-    return labels, mfcc_means[2:].tolist(), mfcc[4].tolist()
+    return labels, mfcc_means[2:21].tolist(), data.tolist()

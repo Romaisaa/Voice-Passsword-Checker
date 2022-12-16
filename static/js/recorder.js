@@ -20,6 +20,7 @@ class VoiceRecorder {
     this.startRef.innerHTML = '<button class="Rec">Recording</button>';
     this.text.innerHTML = "Recording ...";
     this.isRecording = true;
+
     // Start Recording Functionality
     var gumStream, rec, input, audioContext;
     navigator.mediaDevices
@@ -34,6 +35,7 @@ class VoiceRecorder {
       .catch(function (err) {
         console.log(err);
       });
+
     // 3 Sec Record
     await new Promise((resolve) => setTimeout(resolve, 3000));
 

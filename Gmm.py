@@ -1,12 +1,8 @@
 import os
-import wave
-import time
 import pickle
 import numpy as np
 from sklearn import preprocessing
-from scipy.io.wavfile import read
 import python_speech_features as mfcc
-from sklearn.mixture import GaussianMixture
 import librosa
 import numpy
 from python_speech_features import sigproc
@@ -117,7 +113,7 @@ def extract_features(audio,rate,mode):
     combined = np.hstack((mfcc_feature,delta)) 
     return combined
 
-def predict(mode,username):
+def predict(mode,username="Unknown"):
     modelpath={
         "Voice":"models",
         "Voc":"models_voc"
@@ -137,11 +133,11 @@ def predict(mode,username):
     audio,sr = librosa.load("audio.wav")
     vector   = extract_features(audio,sr,mode)
         
-    log_likelihood = np.zeros(len(models)) 
+    score_list = np.zeros(len(models)) 
     
     for i in range(len(models)):
         gmm    = models[i]  #checking with each model one by one
         scores = np.array(gmm.score(vector))
-        log_likelihood[i] = scores.sum()
+        score_list[i] = scores.sum()
          
-    return log_likelihood
+    return score_list
