@@ -116,5 +116,5 @@ First Semester - Biomedical Digital Signal Processing (SBE3110) class project cr
 
 ### Submitted to:
 
-- Dr. Tamer Basha & Eng. Mohamed Mostafa
+- Dr. Tamer Basha & Eng. Abdullah Darwish
   All rights reserved © 2022 to Team 14 - Systems & Biomedical Engineering, Cairo University (Class 2024)
